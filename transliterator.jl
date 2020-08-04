@@ -3,42 +3,60 @@
 ](https://docs.julialang.org/en/v1/base/strings/#Base.replace-Tuple{AbstractString,Pair})
 =#
 
+# TODO: Put this in a file
+const TEST = """
+Quizás
+queso
+aquí
+Colombia
+casa
+volcán
+chocolate
+clase
+microcosmos
+general
+ginebra
+guiso
+guerra
+hombre
+hueso
+Cisne
+cielo
+hoy
+yuca
+lluvia
+allanamiento
+"""
+
+# FIXME: Should these be structs instead of tuples?
+#        This a array should be a constant
+spellpatterns = [
+    (r"y(?=\b)"i      , "i") # /i/  *y  -> *i
+    (r"(?<=[^c])h"i   , "" ) # / /  h   -> Ø
+    (r"c(?=[^eéiíh])"i, "k") # /k/  C   -> K
+    (r"qu"i           , "k") # /k/  QU  -> K
+    (r"gu(?=[eéií])"i , "g") # /g/  gu* -> g*
+    (r"ü"i            , "u") # /gu/ gü  -> gu
+    (r"g(?=[eéií])"i  , "j") # /x/  G   -> J
+    (r"c(?=[eéií])"i  , "s") # /s/  C   -> S (seseo)
+    (r"z"i            , "s") # /s/  Z   -> S (seseo)
+]
+    #(r"v"i            , "b") # /β/  V   -> B (betacismo)
+    #(r"ll"i           , "y") # /j/  LL  -> Y (yeísmo)
+    #(r"c(?=[eéií])"i  , "z") # /θ/  C   -> Z (distinción)
+
 # This function works on strings *not* chars
-subkeepcase(old, new) = isuppercase(old[1]) ? uppercase(new) : lowercase(new)
+keepcase(old, new) = isuppercase(old[1]) ? uppercase(new) : lowercase(new)
 
-function transliterate()
-    teststr = """El rey dice: 'Yo SOY la ley'.
-                 El bufón dice: Ahí hay chocolate"""
+function transliterate(str)
     # *y -> *i
-    # Which of this is better?
-    pattern_y = r"(y|Y)(?=\b)" => y -> subkeepcase(y, "i")
-
-    pattern_y = r"i(?=\b)" => "i"
-    pattern_Y = r"Y(?=\b)" => "I"
-
-    teststr = replace(teststr, pattern_y)
-
-    # // h -> Ø. The "ch" case should be handled differently
-    h = r"(?<=[^c])h|H" => ""
-    # /g/ gu{ei} -> g{ei}; gü -> gu
-    g = r"gu(?=[eéií])" => "g"
-    diaeresis = r"ü" => "u"
-    # /k/ C, QU -> K
-    ck =  r"c(?=[aáoóuú])" => "k"
-    q = r"qu" => "k"
-    # x = "x" => "ks" # More complicated than this
-    # /s/ Z, C -> S (seseo)
-    c = r"c(?=[eéií])" => "s"
-    z = "z" => "s"
-    # /θ/ C => Z (distinción)
-    c = r"c(?=[eéií])" => "z"
-    # /x/ G, J -> J
-    g = r"g(?=[eéií])" => "j"
-    # /j/ LL -> Y (yeísmo)
-    ll = "ll" => "y"
-    # /β/ B -> V (betacismo)
-    b = "v" => "b"
+    #tempstr = replace(str, r"y(?=\b)"i => y -> keepcase(y, "i"))
+    for p in spellpatterns
+        str = replace(str, p[1] => x -> keepcase(x, p[2]))
+        #println(p)
+    end
+    str
 end
 
-println("$(transliterate())")
+println("$(transliterate(TEST))")
 
