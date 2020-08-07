@@ -1,7 +1,6 @@
-# Using chars reduces allocations?
 const spellpatterns = [
+    (r"(?=[^c])h"i, nothing) # / /  h   -> Ø
     (r"y(?=\b)"i      , 'i') # /i/  *y  -> *i
-    #(r"(?<=[^c])h"i   , "")  # / /  h   -> Ø. How to handle this with chars?
     (r"c(?=[^eéiíh])"i, 'k') # /k/  C   -> K
     (r"qu"i           , 'k') # /k/  QU  -> K
     (r"gu(?=[eéií])"i , 'g') # /g/  gu* -> g*
@@ -14,25 +13,21 @@ const spellpatterns = [
     #(r"v"i            , 'b') # /β/  V   -> B (betacismo)
     #(r"c(?=[eéií])"i  , 'z') # /θ/  C   -> Z (distinción)
 
-keepcase(old, new)::Char = isuppercase(old) ? uppercase(new) : new
+keepcase(old, new::Char) = isuppercase(old) ? uppercase(new) : new
+keepcase(old, new::String) = isuppercase(old) ? uppercase(new) : new
 
 function transliterate(str)
     for p in spellpatterns
-        str = replace(str, p[1] => x -> keepcase(x[1], p[2]))
+        str = replace(str, p[1] => x -> keepcase(x[1], p[2] != nothing ? p[2] : ""))
     end
     str
 end
 
-# Should this read the file line by line instead?
-function transliteratefile(f::IOStream)
-    return transliterate(read(f, String)) 
-end
-
-function read_and_transliterate(infname, outfname)
+function transliteratefile(infname, outfname)
     t = open(infname) do infile
-        transliteratefile(infile)
+        transliterate(read(infile, String))
     end
     write(outfname, t)
 end
 
-read_and_transliterate("test/input.txt", "test/output.txt")
+transliteratefile("test/input.txt", "test/output.txt")
