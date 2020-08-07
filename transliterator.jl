@@ -1,12 +1,12 @@
 # Changes for the Bello orthography
-const bello_patterns = [ 
+const bello_patterns = [
     (r"y(?=\b)"i      , 'i') # /i/  *Y -> *I
     (r"g(?=[eéií])"i  , 'j') # /x/  G  -> J
     (r"gu(?=[eéií])"i , 'g') # /g/  GU -> G*
     (r"ü"i            , 'u') # /gu/ GÜ -> GU
     (r"qu"i           , 'q') # /k/  QU -> Q
     (r"c(?=[^eéiíh])"i, 'q') # /k/  C  -> Q
-    (r"c(?=[eéií])"i  , 'z') # /θ/  C  -> Z (distinción)
+    (r"c(?=[eéií])"i  , 'z') # /θ/  C  -> Z, distinción
     (r"(?<=[^c])h"i, nothing) # / /  H  -> Ø
 ]
 
@@ -20,7 +20,7 @@ const korreas_patterns  = [
     (r"gu(?=[eéií])"i , 'g') # /g/  GU -> G*
     (r"qu"i           , 'k') # /k/  QU -> K
     (r"c(?=[^eéiíh])"i, 'k') # /k/  C  -> K
-    (r"c(?=[eéií])"i  , 'z') # /θ/  C  -> Z (distinción)
+    (r"c(?=[eéií])"i  , 'z') # /θ/  C  -> Z, distinción
     (r"(?<=[^c])h"i, nothing) # / /  H  -> Ø
 ]
 
@@ -35,28 +35,34 @@ const vallejo_patterns = [
     (r"c(?=[^eéiíh])"i, 'k') # /k/  C  -> K
     (r"c(?=[eéií])"i  , 's') # /s/  C  -> S, seseo
     (r"z"i            , 's') # /s/  Z  -> S, seseo
-    (r"ch"i           , 'ṣ') # /tʃ/ CH -> Ṣ "ese rara"
+    (r"ch"i           , 'ṣ') # /tʃ/ CH -> Ṣ, "ese rara"
     (r"(?<=[^c])h"i, nothing) # / /  H  -> Ø
-    (r"ll"i           , 'ḷ') # /ʎ/  LL -> Ḷ "ele rara"
-    (r"\br|rr"i       , 'ṛ') # /r/  RR -> Ṛ "erre rara"
+    (r"ll"i           , 'ḷ') # /ʎ/  LL -> Ḷ, "ele rara"
+    (r"\br|rr"i       , 'ṛ') # /r/  RR -> Ṛ, "erre rara"
     (r"v"i            , 'b') # /β/  B  -> V, betacismo
 ]
-# TODO: Add my own reform…
 
 keepcase(old, new)::Char = isuppercase(old) ? uppercase(new) : new
 
-function transliterate(str)
-    for p in vallejo_patterns
+function transliterate(str, orthography)
+    for p in orthography
         str = replace(str, p[1] => x -> p[2] == nothing ? "" : keepcase(x[1], p[2]))
     end
     str
 end
 
-function transliteratefile(infname, outfname)
-    t = open(infname) do infile
-        transliterate(read(infile, String))
+function transliteratefile(orthography, infname, outfname=stdout)
+    try
+        t = open(infname) do infile
+            transliterate(read(infile, String), orthography)
+        end
+        write(outfname, t)
+    catch e
+        println(e)
+        exit(1)
     end
-    write(outfname, t)
 end
 
-transliteratefile("test/input.txt", "test/output.txt")
+transliteratefile(bello_patterns,   "test/test2-derechos-humanos.txt", "test/output-bello.txt")
+transliteratefile(korreas_patterns, "test/test2-derechos-humanos.txt", "test/output-korreas.txt")
+transliteratefile(vallejo_patterns, "test/test2-derechos-humanos.txt", "test/output-vallejo.txt")
