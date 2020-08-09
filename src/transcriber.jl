@@ -1,3 +1,8 @@
+module Transcriber
+
+export transcribe, transcribefile
+export bello_patterns, korreas_patterns, vallejo_patterns
+
 # Changes for the Bello orthography
 const bello_patterns = [
     (r"y(?=\b)"i      , 'i') # /i/  *Y -> *I
@@ -44,17 +49,17 @@ const vallejo_patterns = [
 
 keepcase(old, new)::Char = isuppercase(old) ? uppercase(new) : new
 
-function transliterate(str, orthography)
+function transcribe(str, orthography)
     for p in orthography
         str = replace(str, p[1] => x -> p[2] == nothing ? "" : keepcase(x[1], p[2]))
     end
     str
 end
 
-function transliteratefile(orthography, infname, outfname=stdout)
+function transcribefile(orthography, infname, outfname=stdout)
     try
         t = open(infname) do infile
-            transliterate(read(infile, String), orthography)
+            transcribe(read(infile, String), orthography)
         end
         write(outfname, t)
     catch e
@@ -63,6 +68,4 @@ function transliteratefile(orthography, infname, outfname=stdout)
     end
 end
 
-transliteratefile(bello_patterns,   "test/test2-derechos-humanos.txt", "test/output-bello.txt")
-transliteratefile(korreas_patterns, "test/test2-derechos-humanos.txt", "test/output-korreas.txt")
-transliteratefile(vallejo_patterns, "test/test2-derechos-humanos.txt", "test/output-vallejo.txt")
+end #module

@@ -1,6 +1,6 @@
 # Spanish spelling reforms
 
-A script to transliterate Spanish text into multiple alternative orthographies.
+A script to respell Spanish text into multiple alternative orthographies.
 Work in progress.
 
 TODO:
