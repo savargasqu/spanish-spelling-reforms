@@ -80,4 +80,20 @@ function transcribefile(orthography, infname, outfname=stdout)
     end
 end
 
+function main()
+    try
+        transcribefile(ARGS...)
+    catch e
+        println("""Not enough arguments. The script should be run as:
+                julia transcriber.jl <orthography> <input> <output>""")
+        println(e)
+        exit(1)
+    end
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
+
 end #module
+
