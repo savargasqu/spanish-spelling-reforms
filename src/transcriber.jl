@@ -60,7 +60,7 @@ function keepcase(old, new)::Char
     isuppercase(old) ? uppercase(new) : new
 end
 
-function transcribe(str, orthography)
+function transcribe(orthography, str)
     patterns = getpatterns(orthography)
     for p in patterns
         str = replace(str, p[1] => x -> p[2] == nothing ? "" : keepcase(x[1], p[2]))
@@ -71,7 +71,7 @@ end
 function transcribefile(orthography, infname, outfname=stdout)
     try
         t = open(infname) do infile
-            transcribe(read(infile, String), orthography)
+            transcribe(orthography, read(infile, String))
         end
         write(outfname, t)
     catch e
