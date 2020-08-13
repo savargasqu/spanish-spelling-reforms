@@ -1,9 +1,8 @@
 module Transcriber
 
 export transcribe, transcribefile
-export bello_patterns, korreas_patterns, vallejo_patterns
 
-# Changes for the Bello orthography
+# Patterns for the Bello orthography
 const bello_patterns = [
     (r"y(?=\b)"i      , 'i') # /i/  *Y -> *I
     (r"g(?=[eéií])"i  , 'j') # /x/  G  -> J
@@ -15,7 +14,7 @@ const bello_patterns = [
     (r"(?<=[^c])h"i, nothing) # / /  H  -> Ø
 ]
 
-# Changes for the Korreas orthography
+# Patterns for the Korreas orthography
 # This one is actually much more complex, and includes a lot on
 # the simplification of consonant clusters. These are only the basics.
 const korreas_patterns  = [
@@ -47,10 +46,22 @@ const vallejo_patterns = [
     (r"v"i            , 'b') # /β/  B  -> V, betacismo
 ]
 
+function getpatterns(orthography)
+    if orthography == "bello" || orthography == "Bello"
+        return bello_patterns
+    elseif orthography == "korreas" || orthography == "Korreas"
+        return korreas_patterns
+    elseif orthography == "vallejo" || orthography == "Vallejo"
+        return vallejo_patterns
+    end
+end
+
 keepcase(old, new)::Char = isuppercase(old) ? uppercase(new) : new
 
+
 function transcribe(str, orthography)
-    for p in orthography
+    patterns = getpatterns(orthography)
+    for p in patterns
         str = replace(str, p[1] => x -> p[2] == nothing ? "" : keepcase(x[1], p[2]))
     end
     str
