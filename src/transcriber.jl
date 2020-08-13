@@ -3,7 +3,7 @@ module Transcriber
 export transcribe, transcribefile
 
 # Patterns for the Bello orthography
-const bello_patterns = [
+const bello_patterns = Tuple{Regex, Union{Char, Nothing}}[
     (r"y(?=\b)"i      , 'i') # /i/  *Y -> *I
     (r"g(?=[eéií])"i  , 'j') # /x/  G  -> J
     (r"gu(?=[eéií])"i , 'g') # /g/  GU -> G*
@@ -17,7 +17,7 @@ const bello_patterns = [
 # Patterns for the Korreas orthography
 # This one is actually much more complex, and includes a lot on
 # the simplification of consonant clusters. These are only the basics.
-const korreas_patterns  = [
+const korreas_patterns  = Tuple{Regex, Union{Char, Nothing}}[
     (r"y"i            , 'i') # /i/  Y  -> I. This one happens everywhere
     (r"j"i            , 'x') # /x/  J  -> X
     (r"g(?=[eéií])"i  , 'x') # /x/  G  -> X
@@ -30,7 +30,7 @@ const korreas_patterns  = [
 
 # Patterns for the Vallejo orthography
 # Note that this is the most Latin America-centric of the three
-const vallejo_patterns = [
+const vallejo_patterns = Tuple{Regex, Union{Char, Nothing}}[
     (r"y(?=\b)"i      , 'i') # /i/  *Y -> *I
     (r"g(?=[eéií])"i  , 'j') # /x/  G  -> J
     (r"gu(?=[eéií])"i , 'g') # /g/  GU -> G*
@@ -56,8 +56,9 @@ function getpatterns(orthography)
     end
 end
 
-keepcase(old, new)::Char = isuppercase(old) ? uppercase(new) : new
-
+function keepcase(old, new)::Char
+    isuppercase(old) ? uppercase(new) : new
+end
 
 function transcribe(str, orthography)
     patterns = getpatterns(orthography)
