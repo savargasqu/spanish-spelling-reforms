@@ -5,23 +5,22 @@ export transcribe, transcribefile
 include("patterns.jl")
 
 function getpatterns(orthography)
-    if orthography == "bello" || orthography == "Bello"
-        return bello_patterns
-    elseif orthography == "korreas" || orthography == "Korreas"
-        return korreas_patterns
-    elseif orthography == "vallejo" || orthography == "Vallejo"
-        return vallejo_patterns
+    o = lowercase(orthography)
+    # Poor man's pattern matching
+    if     o == "bello";   bello_patterns
+    elseif o == "korreas"; korreas_patterns
+    elseif o == "vallejo"; vallejo_patterns
     end
 end
 
 function keepcase(old, new)::Char
-    isuppercase(old) ? uppercase(new) : new
+    if isuppercase(old); uppercase(new) else new end
 end
 
 function transcribe(orthography, str)
     patterns = getpatterns(orthography)
     for p in patterns
-        str = replace(str, p[1] => x -> p[2] == nothing ? "" : keepcase(x[1], p[2]))
+        str = replace(str, p[1] => x -> if p[2] === nothing; "" else keepcase(x[1], p[2]) end)
     end
     str
 end
@@ -53,5 +52,4 @@ if abspath(PROGRAM_FILE) == @__FILE__
     main()
 end
 
-end #module
-
+end # module
