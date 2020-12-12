@@ -10,10 +10,11 @@ The available orthografies are the ones suggested by:
 
 ## Why?
 
-I thought it was a neat exercise to learn Julia, and to practice text procesing.
+I thought it was a neat exercise to learn Julia, and to practice text processing.
 
 I also think spelling reforms are a great idea (both in English and Spanish).
 Spanish specifically had very fonetically-focused spelling reforms,
 some of which were recalled during the early days of the Royal Spanish Academy.
-Stil, the fact that transcription can be don automatically using regular expresions,
-shows that Spanish is regular enuf.
+
+Still, transcription can be don automatically,
+which shows that Spanish is regular enuf.
