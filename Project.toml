@@ -1,4 +1,4 @@
-name = "SpanishSpellingReforms"
-uuid = "c84e3305-7d2a-427c-8d38-cfa8a12645b5"
+name = "SpanishRespellings"
+uuid = "55ffd112-bab8-464d-9feb-31d9fdfedc00"
 authors = ["Sergio Alejandro Vargas <savargasqu+git@unal.edu.co>"]
 version = "0.1.0"

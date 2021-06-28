@@ -1,20 +1,17 @@
-# Spanish Spelling Reforms
+# Spanish Respellings
 
 A small script to transcribe Spanish text into multiple alternativ orthografies.
 
-The available orthografies are the ones suggested by:
+The available orthografies are the ones sugested by:
 
 - [Gonzalo Korreas (ES)](https://www.wikiwand.com/es/Gonzalo_Correas) in the early 17th century (not complete)
 - [Andrés Bello](https://www.wikiwand.com/en/Bello_orthography) in the early 19th century
-- [Fernando Vaḷejo (ES)](https://elpais.com/cultura/2013/10/22/actualidad/1382409408_424831.html) in the early 21th century
+- [Fernando Vaḷejo (ES)](https://elpais.com/cultura/2013/10/22/actualidad/1382409408_424831.html)
+
 
 ## Why?
 
-I thought it was a neat exercise to learn Julia, and to practice text processing.
+It's a simple exercise to test the regex facilities of a programming language.
 
-I also think spelling reforms are a great idea (both in English and Spanish).
-Spanish specifically had very fonetically-focused spelling reforms,
-some of which were recalled during the early days of the Royal Spanish Academy.
+I also think spelling reforms are neat.
 
-Still, transcription can be don automatically,
-which shows that Spanish is regular enuf.
