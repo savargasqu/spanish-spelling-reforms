@@ -1,7 +1,5 @@
 module SpanishSpellingReforms
 
-using Base: TTY
-
 export transcribe
 
 include("patterns.jl")
@@ -16,7 +14,7 @@ function transcribe(patterns, buf::AbstractString)
     str
 end
 
-function transcribe(patterns, input::TTY=stdin, output::TTY=stdout)
+function transcribefile(patterns, input::IO=stdin, output::IO=stdout)
     write(output, transcribe(patterns, read(input, String)))
 end
 
@@ -28,15 +26,29 @@ function getpatterns(flag)
     end
 end
 
+
 usage_err() = error("Usage: julia SpanishRespellings.jl [-bkv] <input> [<output>]")
 
 function main()
-    if length(ARGS) == 0; usage_err() end
+    l = length(ARGS)
+    l == 0 && usage_err()
 
     p = getpatterns(ARGS[1])
-    if p === nothing; usage_err() end
+    p === nothing && usage_err()
 
-    transcribe(p, ARGS[2:end]...)
+    if l == 1
+        transcribefile(p)
+    else
+        open(ARGS[2]) do fin
+            if l == 2
+                transcribefile(p, fin)
+            elseif l == 3
+                open(ARGS[3], "a") do fout
+                    transcribefile(p, fin, fout)
+                end
+            end
+        end
+    end
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
